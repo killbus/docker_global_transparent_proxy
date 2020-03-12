@@ -12,7 +12,7 @@ RUN set -eux; \
 	new_ver="v${new_ver##*v}"; \
 	wget https://github.com/Dreamacro/clash/releases/download/${new_ver}/clash-linux-armv8-${new_ver}.gz; \
 	gzip -d clash-linux-armv8-${new_ver}.gz; \
-    mv clash-linux-armv8-${new_ver} clash; \
+	mv clash-linux-armv8-${new_ver} clash; \
 	chmod +x clash
 
 FROM arm64v8/alpine:edge
