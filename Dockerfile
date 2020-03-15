@@ -23,9 +23,11 @@ COPY config.yaml /root/.config/clash/
 
 RUN apk add --no-cache \
  ca-certificates  \
- bash  \
- iptables  \
- bash-doc  \
+ bash \
+ iptables \
+ ipset \
+ iproute2 \
+ bash-doc \
  bash-completion  \
  rm -rf /var/cache/apk/* && \
  chmod a+x /usr/local/bin/entrypoint.sh

@@ -13,7 +13,7 @@ RUN go mod download
 COPY Makefile /clash-src/Makefile
 RUN make linux-armv8
 
-FROM arm64v8/alpine:edge
+FROM arm64v8/alpine:latest
 
 # RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.11/main/" > /etc/apk/repositories
 
@@ -25,9 +25,11 @@ COPY config.yaml /root/.config/clash/
 
 RUN apk add --no-cache \
  ca-certificates  \
- bash  \
- iptables  \
- bash-doc  \
+ bash \
+ iptables \
+ ipset \
+ iproute2 \
+ bash-doc \
  bash-completion  \
  rm -rf /var/cache/apk/* && \
  chmod a+x /usr/local/bin/entrypoint.sh
