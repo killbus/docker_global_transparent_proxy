@@ -3,15 +3,23 @@ FROM dreamacro/clash:latest
 COPY entrypoint.sh /usr/local/bin/
 COPY config.yaml /root/.config/clash/
 
-RUN apk add --no-cache \
- bash \
- bash-doc \
- bash-completion  \
- iptables \
- ipset \
- iproute2 \
- rm -rf /var/cache/apk/* && \
- chmod a+x /usr/local/bin/entrypoint.sh
+RUN set -eux; \
+    \
+    runDeps=' \
+        iptables \
+        ipset \
+        iproute2 \
+    '; \
+    apk add --no-cache \
+        $runDeps \
+        bash \
+        bash-doc \
+        bash-completion \
+    ; \
+    \
+    rm -rf /var/cache/apk/*; \
+    mv /clash /usr/local/bin/; \
+    chmod a+x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["/clash"]
+CMD ["/usr/local/bin/clash","-d","/clash_config"]
