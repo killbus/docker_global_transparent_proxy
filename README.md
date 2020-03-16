@@ -29,4 +29,138 @@
 
 ## clash 配置参考
 
+### TUN 模式
+
+docker-compose.yml
+
+```
+version: "3.4"
+
+services:
+  clash_tp:
+    container_name: clash_tp
+    image: fy1128/clash_transparent_proxy:arm64v8
+    privileged: true
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+    restart: unless-stopped
+    volumes:
+      - /root/docker/clash_tp/clash_config:/clash_config
+    environment:
+      - TZ=Asia/Shanghai
+      - EN_MODE_TUN=1
+      - EN_MODE=redir-host
+    networks:
+      dMACvLAN:
+        ipv4_address: 192.168.5.254
+      aio:
+    dns:
+      - 114.114.114.114
+```
+
+clash config.yaml
+
+```
+# port of HTTP
+port: 7890
+
+# port of SOCKS5
+socks-port: 7891
+
+# redir port for Linux and macOS
+# 必须打开
+redir-port: 7892
+
+allow-lan: true
+
+# Only applicable when setting allow-lan to true
+# "*": bind all IP addresses
+# 192.168.122.11: bind a single IPv4 address
+# "[aaaa::a8aa:ff:fe09:57d8]": bind a single IPv6 address
+bind-address: "*"
+
+# Rule / Global/ Direct (default is Rule)
+mode: Rule
+
+# set log level to stdout (default is info)
+# info / warning / error / debug / silent
+log-level: debug
+
+# RESTful API for clash
+external-controller: 0.0.0.0:9090
+
+# you can put the static web resource (such as clash-dashboard) to a directory, and clash would serve in `${API}/ui`
+# input is a relative path to the configuration directory or an absolute path
+external-ui: dashboard
+
+# Secret for RESTful API (Optional)
+# secret: ""
+
+# experimental feature
+experimental:
+  ignore-resolve-fail: true # ignore dns resolve fail, default value is true
+
+# authentication of local SOCKS5/HTTP(S) server
+# authentication:
+#  - "user1:pass1"
+#  - "user2:pass2"
+
+# # experimental hosts, support wildcard (e.g. *.clash.dev Even *.foo.*.example.com)
+# # static domain has a higher priority than wildcard domain (foo.example.com > *.example.com)
+hosts:
+   '*.clash.dev': 127.0.0.1
+   'alpha.clash.dev': '::1'
+   'trojan': 172.28.0.233
+
+tun:
+  enable: true
+  device-url: dev://clash0 #specific a TUN device
+  dns-listen: 0.0.0.0:1053 #TUN dns listen port, only DNS requires bypassed it, tun can hijack them
+dns:
+  #必须打开dns,防止污染
+  enable: true # set true to enable dns (default is false)
+  ipv6: false # default is false
+  listen: 0.0.0.0:1053
+  enhanced-mode: redir-host # redir-host or fake-ip
+  # fake-ip-range: 198.18.0.1/16 # if you don't know what it is, don't change it
+  #fake-ip-filter: # fake ip white domain list
+  #  - "*.lan"
+  #  - localhost.ptlogin2.qq.com
+  nameserver:
+    # use my privileged overture container as DNS provider
+    - 192.168.5.252
+  #  - 114.114.114.114
+  #  - tls://dns.rubyfish.cn:853 # dns over tls
+  #  - https://1.1.1.1/dns-query # dns over https
+  #fallback: # concurrent request with nameserver, fallback used when GEOIP country isn't CN
+  #  - tls://dns.rubyfish.cn:853
+  #  - tls://1.0.0.1:853
+  #  - tls://dns.google:853
+  #fallback-filter:
+  #  geoip: true # default
+  #  ipcidr: # ips in these subnets will be considered polluted
+  #    - 240.0.0.0/4
+Proxy:
+  - name: a-trojan-proxy
+    type: socks5
+    server: trojan
+    port: "1080"
+
+...
+```
+
+**参考资料**
+
+配置文件
+
 [https://lancellc.gitbook.io/clash/whats-new/clash-tun-mode/clash-tun-mode-2/setup-for-redir-host-mode](https://lancellc.gitbook.io/clash/whats-new/clash-tun-mode/clash-tun-mode-2/setup-for-redir-host-mode)
+
+
+路由及防火墙设置
+
+[kr328-clash-setup-scripts](https://github.com/h0cheung/kr328-clash-setup-scripts)
+
+overturn DNS
+[overturn + clash in docker as dns server and transparent proxy gateway](https://gist.github.com/killbus/69fdabdd1d8ae8f4030f4f96307ffa1b)
