@@ -26,3 +26,7 @@
 
 ## 构建方法
 `docker buildx build --platform linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8 -t zhangyi2018/clash_transparent_proxy:1.0.7 -t zhangyi2018/clash_transparent_proxy:latest . --push`
+
+## clash 配置参考
+
+[https://lancellc.gitbook.io/clash/whats-new/clash-tun-mode/clash-tun-mode-2/setup-for-redir-host-mode](https://lancellc.gitbook.io/clash/whats-new/clash-tun-mode/clash-tun-mode-2/setup-for-redir-host-mode)
