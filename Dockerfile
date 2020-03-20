@@ -6,7 +6,7 @@ WORKDIR /go
 RUN set -eux; \
     \
     curl -L -O https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb; \
-    git clone https://github.com/Kr328/clash.git /clash-src
+    git clone --single-branch --branch tun-dev https://github.com/comzyh/clash /clash-src
 
 WORKDIR /clash-src
 
