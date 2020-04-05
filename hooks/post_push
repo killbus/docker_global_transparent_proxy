@@ -3,7 +3,7 @@
 docker tag $IMAGE_NAME $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}
 docker push $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}
 
-export CLASH_VERSION=$(docker run --entrypoint "" --rm $IMAGE_NAME bash -c 'clash -v |grep -oE "\d{8}"')
+export CLASH_VERSION=$(docker run --entrypoint "" --rm $IMAGE_NAME bash -c 'clash -v | awk "{print $2}"')
 if [ -n ${CLASH_VERSION+x} ]; then
     docker tag $IMAGE_NAME $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}-${CLASH_VERSION}
     docker push $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}-${CLASH_VERSION}
