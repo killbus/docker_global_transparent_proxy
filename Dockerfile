@@ -1,12 +1,14 @@
 FROM golang:alpine as builder
 
+ARG BRANCH='tun-dev'
+
 RUN apk add --no-cache make git curl
 
 WORKDIR /go
 RUN set -eux; \
     \
     curl -L -O https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb; \
-    git clone --single-branch --branch tun-dev https://github.com/comzyh/clash /clash-src
+    git clone --single-branch --branch ${BRANCH} https://github.com/comzyh/clash /clash-src
 
 WORKDIR /clash-src
 
@@ -20,13 +22,17 @@ FROM alpine:latest
 # RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.11/main/" > /etc/apk/repositories
 
 COPY --from=builder /clash-src/bin/clash /usr/local/bin/
-
+COPY --from=builder /go/Country.mmdb /root/.config/clash/
+COPY config.yaml /root/.config/clash/
 COPY entrypoint.sh /usr/local/bin/
 
 RUN set -eux; \
     \
+    chmod a+x /usr/local/bin/clash; \
+    chmod a+x /usr/local/bin/entrypoint.sh; \
     apk add --no-cache libcap; \
-    setcap cap_net_raw,cap_net_admin=eip /usr/local/bin/clash; \
+    # dumped by `pscap` of package `libcap-ng-utils`
+    setcap cap_chown,cap_dac_override,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_mknod,cap_audit_write,cap_setfcap=eip /usr/local/bin/clash; \
     runDeps=' \
         iptables \
         ip6tables \
@@ -40,11 +46,7 @@ RUN set -eux; \
         bash-completion \
     ; \
     \
-    rm -rf /var/cache/apk/*; \
-    chmod a+x /usr/local/bin/entrypoint.sh
-
-COPY --from=builder /go/Country.mmdb /root/.config/clash/
-COPY config.yaml /root/.config/clash/
+    rm -rf /var/cache/apk/*
 
 WORKDIR /clash_config
 

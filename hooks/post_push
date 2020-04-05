@@ -1,0 +1,10 @@
+#!/bin/bash
+[ -z ${BRANCH+x} ] || export BRANCH_TAG="-$BRANCH"
+docker tag $IMAGE_NAME $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}
+docker push $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}
+
+export CLASH_VERSION=$(docker run --entrypoint "" --rm $IMAGE_NAME bash -c 'clash -v |grep -oE "\d{8}"')
+if [ -n ${CLASH_VERSION+x} ]; then
+    docker tag $IMAGE_NAME $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}-${CLASH_VERSION}
+    docker push $DOCKER_REPO:$DOCKER_TAG${BRANCH_TAG}-${CLASH_VERSION}
+fi
