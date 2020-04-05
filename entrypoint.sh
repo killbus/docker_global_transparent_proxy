@@ -107,7 +107,7 @@ setup_clash_tun() {
         iptables -t mangle -N CLASH
         iptables -t mangle -F CLASH
         iptables -t mangle -A CLASH -m owner --uid-owner "$PROXY_BYPASS_USER" -j RETURN
-        iptables -t mangle -A CLASH -m owner --uid-owner systemd-timesync -j RETURN
+        #iptables -t mangle -A CLASH -m owner --uid-owner systemd-timesync -j RETURN
         iptables -t mangle -A CLASH -d "$PROXY_FORCE_NETADDR" -j MARK --set-mark "$PROXY_FWMARK"
         #iptables -t mangle -A CLASH -m cgroup --cgroup "$PROXY_BYPASS_CGROUP" -j RETURN
         iptables -t mangle -A CLASH -m addrtype --dst-type BROADCAST -j RETURN
@@ -118,7 +118,7 @@ setup_clash_tun() {
         iptables -t nat -F CLASH_DNS
         iptables -t nat -A CLASH_DNS -d 127.0.0.0/8 -j RETURN
         iptables -t nat -A CLASH_DNS -m owner --uid-owner "$PROXY_BYPASS_USER" -j RETURN
-        iptables -t nat -A CLASH_DNS -m owner --uid-owner systemd-timesync -j RETURN
+        #iptables -t nat -A CLASH_DNS -m owner --uid-owner systemd-timesync -j RETURN
         #iptables -t nat -A CLASH_DNS -m cgroup --cgroup "$PROXY_BYPASS_CGROUP" -j RETURN
         iptables -t nat -A CLASH_DNS -p udp -j REDIRECT --to-ports "$PROXY_DNS_PORT"
 
