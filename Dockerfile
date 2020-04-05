@@ -1,6 +1,9 @@
 FROM golang:alpine as builder
 
 ARG BRANCH='tun-dev'
+ENV BRANCH=$BRANCH
+
+RUN echo "Using branch: $BRANCH"
 
 RUN apk add --no-cache make git curl
 
