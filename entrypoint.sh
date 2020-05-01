@@ -181,7 +181,7 @@ clean_clash_tun() {
 
 } &> /dev/null
 
-reset_iptables
+#reset_iptables
 set_clash_iptables
 
 #开启转发
