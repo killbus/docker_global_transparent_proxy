@@ -41,6 +41,8 @@ RUN set -eux; \
         ip6tables \
         ipset \
         iproute2 \
+        curl \
+        bind-tools \
     '; \
     apk add --no-cache \
         $runDeps \
@@ -50,6 +52,8 @@ RUN set -eux; \
     ; \
     \
     rm -rf /var/cache/apk/*
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 WORKDIR /clash_config
 
